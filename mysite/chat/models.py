@@ -11,11 +11,13 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(max_length=40, unique=True)
+    img = models.ImageField(upload_to='userprofile_img/', blank=True, null=True)
 
 
 class Chat(models.Model):
     name = models.CharField(max_length=255)
     members = models.ManyToManyField(User, related_name='chats')
+    imgprofile = models.ImageField(upload_to='chat_imgprofile/', blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='chat_image/', blank=True, null=True)
     video = models.FileField(upload_to='videos/', blank=True, null=True)
@@ -31,7 +33,7 @@ class Message(models.Model):
     description = models.TextField(null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
-    image = models.ImageField(upload_to='chat_image/', blank=True, null=True)
+    image = models.ImageField(upload_to='message_image/', blank=True, null=True)
     video = models.FileField(upload_to='videos/', blank=True, null=True)
     last_activity = models.DateTimeField(auto_now=True)
 
