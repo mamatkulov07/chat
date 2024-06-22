@@ -1,9 +1,18 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, generics
+from rest_framework.views import APIView
+from social_core.exceptions import MissingBackend
+from social_django.utils import psa, load_strategy, load_backend
 from .serializers import *
 from .models import UserProfile, Chat, Message
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import get_user_model, authenticate
+
+from .serializers import RegisterSerializer
+
+User = get_user_model()
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -44,3 +53,20 @@ class MessageViewSet(viewsets.ModelViewSet):
         message.read = True
         message.save()
         return Response({'status': 'message marked as read'}, status=status.HTTP_200_OK)
+
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            "user": serializer.data,
+        }, status=status.HTTP_201_CREATED)
+

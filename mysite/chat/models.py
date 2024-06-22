@@ -31,7 +31,7 @@ class Message(models.Model):
     description = models.TextField(null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
-    image = models.ImageField(upload_to='chat_image/', blank=True, null=True)
+    image = models.ImageField(upload_to='message_image/', blank=True, null=True)
     video = models.FileField(upload_to='videos/', blank=True, null=True)
     last_activity = models.DateTimeField(auto_now=True)
 
