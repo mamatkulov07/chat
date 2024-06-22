@@ -13,15 +13,30 @@ class UserProfile(models.Model):
     email = models.EmailField(max_length=40, unique=True)
 
 
-class Chat(models):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+class Chat(models.Model):
+    name = models.CharField(max_length=255)
+    members = models.ManyToManyField(User, related_name='chats')
+    date = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='chat_image/', blank=True, null=True)
+    video = models.FileField(upload_to='videos/', blank=True, null=True)
+    last_activity = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Message(models.Model):
+    chat = models.ForeignKey(Chat, related_name='messages', on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, related_name='messages', on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to="img/", null=True, blank=True)
-    video = models.FileField(upload_to="video/", null=True, blank=True)
-    date = models.DateTimeField(default=datetime.today)
+    date = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+    image = models.ImageField(upload_to='chat_image/', blank=True, null=True)
+    video = models.FileField(upload_to='videos/', blank=True, null=True)
+    last_activity = models.DateTimeField(auto_now=True)
 
-
-
+    def __str__(self):
+        return self.chat
 
 
 
